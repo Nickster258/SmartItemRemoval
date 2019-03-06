@@ -26,6 +26,10 @@ public class SmartItemRemoval extends JavaPlugin implements Listener {
 
     @EventHandler
     private void onItemSpawnEvent(ItemSpawnEvent e) {
+        if (limit == 0) {
+            e.getEntity().remove();
+            return;
+        }
         if (items.size() > limit) {
             Item tmp = items.get(0);
             tmp.remove();
