@@ -1,10 +1,13 @@
 package org.stonecipher;
 
+import org.bukkit.GameRule;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -27,7 +30,7 @@ public class SmartItemRemoval extends JavaPlugin implements Listener {
     @EventHandler
     private void onItemSpawnEvent(ItemSpawnEvent e) {
         if (limit == 0) {
-            e.getEntity().remove();
+            e.setCancelled(true);
             return;
         }
         if (items.size() > limit) {
@@ -36,6 +39,20 @@ public class SmartItemRemoval extends JavaPlugin implements Listener {
             items.remove(0);
         }
         items.add(e.getEntity());
+    }
+
+    @EventHandler
+    private void onPlayerItemDropEvent(PlayerDropItemEvent e) {
+        if (limit == 0) {
+            e.setCancelled(true);
+            return;
+        }
+        if (items.size() > limit) {
+            Item tmp = items.get(0);
+            tmp.remove();
+            items.remove(0);
+        }
+        items.add(e.getItemDrop());
     }
 
     private void setupConfig() {
