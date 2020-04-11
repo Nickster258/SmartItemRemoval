@@ -1,5 +1,12 @@
 name: SmartItemRemoval
 main: org.stonecipher.SmartItemRemoval
 author: Nickster258
-version: 1.0
+version: 1.1
 api-version: 1.15
+
+commands:
+  keepdrops:
+    description: Toggle to allow players the option of keeping dropped items.
+    usage: /<command>
+    permission: smartitemremoval.toggle
+    permission-message: You don't have permission!
