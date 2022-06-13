@@ -10,15 +10,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class SmartItemRemoval extends JavaPlugin implements Listener {
 
-    private ArrayList<Player> keepDropPlayers = new ArrayList<Player>();
-    private FileConfiguration config = getConfig();
-    private ArrayList<Item> items = new ArrayList<Item>();
+    private final ArrayList<Player> keepDropPlayers = new ArrayList<Player>();
+    private final FileConfiguration config = getConfig();
+    private final ArrayList<Item> items = new ArrayList<Item>();
+    private final BukkitScheduler scheduler = getServer().getScheduler();
     private int limit = 0;
 
     @Override
@@ -50,7 +52,12 @@ public class SmartItemRemoval extends JavaPlugin implements Listener {
     @EventHandler
     private void onItemSpawnEvent(ItemSpawnEvent e) {
         if (limit == 0) {
-            e.setCancelled(true);
+            // Note, I am doing contains() since the different shulkers are different types
+            if (e.getEntity().getItemStack().getType().name().contains("SHULKER")) {
+                this.scheduler.runTaskLater(this, () -> e.getEntity().remove(), 20);
+            } else {
+                e.setCancelled(true);
+            }
             return;
         }
         if (items.size() > limit) {

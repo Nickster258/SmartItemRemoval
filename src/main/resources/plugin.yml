@@ -1,7 +1,7 @@
 name: SmartItemRemoval
 main: org.stonecipher.SmartItemRemoval
 author: Nickster258
-version: 1.2
+version: 1.3
 api-version: 1.16
 
 commands:
