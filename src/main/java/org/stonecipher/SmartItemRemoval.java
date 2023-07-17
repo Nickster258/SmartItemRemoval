@@ -7,6 +7,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 public class SmartItemRemoval extends JavaPlugin implements Listener {
 
     private final ArrayList<Player> keepDropPlayers = new ArrayList<Player>();
+    private final ArrayList<Player> pickupShulkersPlayers = new ArrayList<Player>();
     private final FileConfiguration config = getConfig();
     private final ArrayList<Item> items = new ArrayList<Item>();
     private final BukkitScheduler scheduler = getServer().getScheduler();
@@ -45,8 +47,30 @@ public class SmartItemRemoval extends JavaPlugin implements Listener {
                 keepDropPlayers.add((Player) sender);
                 sendMessage(sender, "You are opted into retaining dropped items.");
             }
+        } else if (cmd.getName().equalsIgnoreCase("pickupshulkers")) {
+            if(pickupShulkersPlayers.contains(sender)) {
+                pickupShulkersPlayers.remove(sender);
+                sendMessage(sender, "You have opted out of picking up shulker boxes.");
+            } else {
+                pickupShulkersPlayers.add((Player) sender);
+                sendMessage(sender, "You are opted into picking up shulker boxes.");
+            }
         }
         return true;
+    }
+
+    @EventHandler
+    private void onItemPickUpEvent(EntityPickupItemEvent e) {
+        if (!(e.getEntity() instanceof Player)) {
+            return;
+        }
+        Player player = (Player) e.getEntity();
+        if (pickupShulkersPlayers.contains(player)) {
+            return;
+        }
+        if (e.getItem().getItemStack().getType().name().contains("SHULKER")) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
