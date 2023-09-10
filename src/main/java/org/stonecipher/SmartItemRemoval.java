@@ -68,7 +68,7 @@ public class SmartItemRemoval extends JavaPlugin implements Listener {
         if (pickupShulkersPlayers.contains(player)) {
             return;
         }
-        if (e.getItem().getItemStack().getType().name().contains("SHULKER")) {
+        if (e.getItem().getItemStack().getType().name().contains("SHULKER_BOX")) {
             e.setCancelled(true);
         }
     }
@@ -77,7 +77,7 @@ public class SmartItemRemoval extends JavaPlugin implements Listener {
     private void onItemSpawnEvent(ItemSpawnEvent e) {
         if (limit == 0) {
             // Note, I am doing contains() since the different shulkers are different types
-            if (e.getEntity().getItemStack().getType().name().contains("SHULKER")) {
+            if (e.getEntity().getItemStack().getType().name().contains("SHULKER_BOX")) {
                 this.scheduler.runTaskLater(this, () -> e.getEntity().remove(), 20);
             } else {
                 e.setCancelled(true);
